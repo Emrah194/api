@@ -7,8 +7,10 @@
 --%>
 <%@ page import="org.json.JSONObject" %>
 <%@ page import="java.io.InputStream" %>
-<%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.Scanner" %>
+<%@ page import="java.util.Iterator" %>
+<%@ page import="java.io.*" %>
+
 <%--
   --------------------------------------------
   How to Use
@@ -23,7 +25,7 @@
 --%>
 <%
     class Json{
-        public JSONObject jsonObject;
+        JSONObject jsonObject;
         public String type;
         public String table = null;
         public String limit;
@@ -33,14 +35,16 @@
         public Json(){}
 
         public JSONObject jsonRead(InputStream inputStream){
+            Scanner s       = new Scanner(inputStream).useDelimiter("\\A");
+            String result   = s.hasNext() ? s.next() : "";
             try{
-                Scanner s       = new Scanner(inputStream).useDelimiter("\\A");
-                String result   = s.hasNext() ? s.next() : "";
                 jsonObject      = new JSONObject(result);
-               // parseRequestJsonBody(jsonObject);
+                parseRequestJsonBody(jsonObject);
+                Mongo mongo   = new Mongo();
+                mongo.setAndInsert(null,"method","type","class",result);
             } catch (Exception e) {
-             //   Mongo mongo   = new Mongo();
-               // mongo.setAndInsert(e,"jsonRead","error","Json.sql",null);
+                Mongo mongo   = new Mongo();
+                mongo.setAndInsert(e,"jsonRead","error","Json.sql",null);
             } finally {
                 return jsonObject;
             }
@@ -66,9 +70,10 @@
                 }
 
             } catch (Exception e) {
-             //   Mongo mongo   = new Mongo();
-              //  mongo.setAndInsert(e,"setSqlQueryFromRequestJsonBody","error","Json.sql",null);
+                Mongo mongo   = new Mongo();
+                mongo.setAndInsert(e,"setSqlQueryFromRequestJsonBody","error","Json.sql",null);
             } finally {}
         }
     }
+    //
 %>

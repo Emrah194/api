@@ -1,31 +1,15 @@
-<%@ page import="org.json.JSONObject" %>
-<%@ page import="java.util.Scanner" %>
-<%@ page import="java.io.*" %>
+<%@ page errorPage="error.jsp" %>
+<%@include file="classes/Postgre.jsp" %>
+
 <%
-    Scanner s       = new Scanner(request.getInputStream()).useDelimiter("\\A");
-    String result   = s.hasNext() ? s.next() : "";
-    // out.print(request.getInputStream());
-    try{
-       /* JSONObject jo = new JSONObject(result);
-        out.print(result.toString());*/
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(request.getInputStream()));
-        PrintWriter r = new PrintWriter(response.getOutputStream());
-
-        response.setContentType("application/json");
-
-        String line = null;
-        while((line = in.readLine()) != null) {
-            r.printf("%s<br/>\r\n", line);
-        }
-        r.printf("emrah");
-
-        r.flush();
-    } catch (Exception e) {
-        out.print(e.getMessage());
+    //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    //out.print(sdf.format(new Date()));
+    //JSONObject where = json.where;
+    //out.print(where.get("customer_id"));
+    response.setContentType("application/json");
+    Postgre postgre = new Postgre(request.getInputStream());
+    if(postgre.error != 1){
+        out.print(postgre.select());
+        //out.print(postgre.filter);
     }
-    finally {
-        out.print(result + "work");
-    }
-
 %>
