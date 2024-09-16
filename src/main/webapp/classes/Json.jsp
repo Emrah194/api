@@ -30,7 +30,8 @@
         public String table = null;
         public String limit;
         public JSONObject where;
-        String filter          = "";
+        String filter       = "";
+        String set          = "";
 
         public Json(){}
 
@@ -41,7 +42,7 @@
                 jsonObject      = new JSONObject(result);
                 parseRequestJsonBody(jsonObject);
                 Mongo mongo   = new Mongo();
-                mongo.setAndInsert(null,"method","type","class",result);
+                mongo.setAndInsert(null,"jsonRead","watch","Json.jsp",result);
             } catch (Exception e) {
                 Mongo mongo   = new Mongo();
                 mongo.setAndInsert(e,"jsonRead","error","Json.sql",null);
@@ -57,6 +58,7 @@
                 table = (String) jo.get("table");
                 limit = (String) jo.get("limit");
                 where = (JSONObject) jo.get("where");
+                set   = (String) jo.get("set");
                 Iterator<String> keys  = where.keys();
                 while(keys.hasNext()) {
                     if(i == 0){

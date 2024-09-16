@@ -27,13 +27,15 @@
         private java.sql.Statement stmt;
         private java.sql.Connection conn;
         private java.sql.ResultSet rs;
-        private java.io.BufferedReader reader;
-        JSONObject jsonObject;
         JSONObject requestBodyParameters;
+        JSONObject rowdata;
+        JSONObject response;
         public int error = 0;
-        String query = "";
+        public String query = "";
 
         public Postgre(InputStream inputStream){
+            rowdata     = new JSONObject();
+            response    = new JSONObject();
             requestBodyParameters = jsonRead(inputStream);
             if(table == null){
                 error = 1;
@@ -64,22 +66,23 @@
         }
 
         public JSONObject select(){
-            Map<String, String> hm = new HashMap<String, String>();
-            JSONObject rowdata     = new JSONObject();
-            JSONObject response    = new JSONObject();
             try	{
                 query = "SELECT * FROM "+table+filter+" limit "+limit;
                 rs                     = stmt.executeQuery(query);
                 ResultSetMetaData rsmd = rs.getMetaData();
                 int columnCount        = rsmd.getColumnCount();
                 while (rs.next()) {
-                    //out.print(rs.getString(1));
+                    rowdata.clear();
+                   // out.print(rs.getString(1));
                     for (int i = 1; i <= columnCount; i++ ) {
                         String name        = rsmd.getColumnName(i);
                         String columnValue = rs.getString(name);
                         rowdata.put(name,columnValue);
                     }
-                    response.put(rs.getString(1),rowdata);
+                    Mongo mongo   = new Mongo();
+                    mongo.setAndInsert(null,"select","watch","Postgre.jsp",rowdata.toString());
+                    response.put(rs.getString(1), rowdata);
+                  //  rowdata.clear();
                 }
                 rs.close();
                 stmt.close();
@@ -98,5 +101,18 @@
                 //return new JSONObject(hm);
             }
         }
+        public void update(){
+            try{
+                query = "UPDATE "+table+ " " + set +" SET "+filter;
+                Mongo mongo = new Mongo();
+                mongo.setAndInsert(null, "update", "watch", "Postgre.jsp", query);
+            } catch (Exception e)	{
+                Mongo mongo   = new Mongo();
+                mongo.setAndInsert(e,"update","error","Postgre.sql",query);
+            } finally {
+
+            }
+        }
+
     }
 %>
