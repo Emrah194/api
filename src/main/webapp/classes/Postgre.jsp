@@ -103,9 +103,9 @@
         }
         public void update(){
             try{
-                query = "UPDATE "+table+ " " + set +" SET "+filter;
+                query = "UPDATE "+ table + set + filter;
                 Mongo mongo = new Mongo();
-                mongo.setAndInsert(null, "update", "watch", "Postgre.jsp", query);
+                mongo.setAndInsert(null, "update", "watch", "Postgre.jsp", set);
             } catch (Exception e)	{
                 Mongo mongo   = new Mongo();
                 mongo.setAndInsert(e,"update","error","Postgre.sql",query);

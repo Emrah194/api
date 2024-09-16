@@ -30,8 +30,10 @@
         public String table = null;
         public String limit;
         public JSONObject where;
+        public JSONObject setObject;
         String filter       = "";
         String set          = "";
+        String name         = "";
 
         public Json(){}
 
@@ -57,17 +59,30 @@
                 type  = (String) jo.get("type");
                 table = (String) jo.get("table");
                 limit = (String) jo.get("limit");
-                where = (JSONObject) jo.get("where");
-                set   = (String) jo.get("set");
+                where       = (JSONObject) jo.get("where");
+                setObject   = (JSONObject) jo.get("set");
                 Iterator<String> keys  = where.keys();
                 while(keys.hasNext()) {
                     if(i == 0){
-                        filter = filter + " where ";
+                        filter = filter + " WHERE ";
                     } else{
-                        filter = filter + " and ";
+                        filter = filter + " AND ";
                     }
                     String key = keys.next();
                     filter = filter + " " + key + " = '" + (String) where.get(key) + "'";
+                    i++;
+                }
+
+                i = 0;
+                Iterator<String> setkeys  = setObject.keys();
+                while(setkeys.hasNext()) {
+                    if(i == 0){
+                        set = " SET ";
+                    } else{
+                        set = " , ";
+                    }
+                    String key = setkeys.next();
+                    set = set + " " + key + " = '" + (String) setObject.get(key) + "'";
                     i++;
                 }
 
