@@ -101,16 +101,25 @@
                 //return new JSONObject(hm);
             }
         }
-        public void update(){
+        public JSONObject update(){
+            String message = "";
             try{
                 query = "UPDATE "+ table + set + filter;
+                stmt.executeUpdate(query);
+                stmt.close();
                 Mongo mongo = new Mongo();
                 mongo.setAndInsert(null, "update", "watch", "Postgre.jsp", set);
+                message     = "{\"status\":\"200\",\"message\":\"Operation is succesfully.\"}";
+            } catch (java.sql.SQLException sqle) {
+                Mongo mongo = new Mongo();
+                mongo.setAndInsert(sqle, "select", "error", "Postgre.sql", query);
+                message     = "{\"status\":\"500\",\"message\":\"Operation is not succesfully.\"}";
             } catch (Exception e)	{
                 Mongo mongo   = new Mongo();
                 mongo.setAndInsert(e,"update","error","Postgre.sql",query);
+                message     = "{\"status\":\"500\",\"message\":\"Operation is not succesfully.\"}";
             } finally {
-
+                return new JSONObject(message);
             }
         }
 

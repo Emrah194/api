@@ -60,7 +60,9 @@
                 table = (String) jo.get("table");
                 limit = (String) jo.get("limit");
                 where       = (JSONObject) jo.get("where");
-                setObject   = (JSONObject) jo.get("set");
+                if(!jo.isNull("set")){
+                    setObject   = (JSONObject) jo.get("set");
+                }
                 Iterator<String> keys  = where.keys();
                 while(keys.hasNext()) {
                     if(i == 0){
@@ -74,18 +76,19 @@
                 }
 
                 i = 0;
-                Iterator<String> setkeys  = setObject.keys();
-                while(setkeys.hasNext()) {
-                    if(i == 0){
-                        set = " SET ";
-                    } else{
-                        set = " , ";
+                if(!jo.isNull("set")){
+                    Iterator<String> setkeys  = setObject.keys();
+                    while(setkeys.hasNext()) {
+                        if(i == 0){
+                            set = " SET ";
+                        } else{
+                            set = " , ";
+                        }
+                        String key = setkeys.next();
+                        set = set + " " + key + " = '" + (String) setObject.get(key) + "'";
+                        i++;
                     }
-                    String key = setkeys.next();
-                    set = set + " " + key + " = '" + (String) setObject.get(key) + "'";
-                    i++;
                 }
-
             } catch (Exception e) {
                 Mongo mongo   = new Mongo();
                 mongo.setAndInsert(e,"setSqlQueryFromRequestJsonBody","error","Json.sql",null);
