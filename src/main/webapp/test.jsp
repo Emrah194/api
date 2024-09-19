@@ -1,25 +1,14 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="java.util.*" %>
-<%@ page import="java.io.*" %>
-<%@ page import="org.json.JSONObject" %>
+<%@ page import="io.github.cdimascio.dotenv.Dotenv" %>
 
 <%
-    /*BufferedReader in = new BufferedReader(
-            new InputStreamReader(request.getInputStream()));
-    PrintWriter r     = new PrintWriter(response.getOutputStream());
 
-   // response.setContentType("application/json");
-    String line = null;
-    while((line = in.readLine()) != null) {
-        r.printf("%s<br/>\r\n", line);
-    }
-    r.printf("emrah");
+    Dotenv dotenv = Dotenv
+            .configure()
+            .directory(request.getServletContext().getRealPath(""))
+            .filename(".env")
+            .ignoreIfMalformed()
+           // .ignoreIfMissing()
+            .load();
+    out.print(dotenv.get("MY_ENV_VAR1"));
 
-    r.flush();*/
-    Scanner s       = new Scanner(request.getInputStream()).useDelimiter("\\A");
-    String result   = s.hasNext() ? s.next() : "";
-    out.print(result);
-    JSONObject jsonObject      = new JSONObject(result);
-    String type  = (String) jsonObject.get("type");
-    out.print(type);
 %>
